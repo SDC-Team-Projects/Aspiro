@@ -1,4 +1,4 @@
-# [Название проекта]
+# [Aspiro/Next Step]
 
 ## Информация о команде
 
@@ -6,13 +6,13 @@
 
 | Роль | Имя | GitHub | Email |
 |------|-----|--------|-------|
-| Team Lead + Backend | | @username | |
-| Backend | | @username | |
-| Frontend | | @username | |
-| Frontend | | @username | |
+| Team Lead  + Frontend  | Alina Bumbul | @alina2212 |  alina.bumbul@stud.esdc.lt|
+| Backend | Aliaksandr Kartavitski| @cherrySunset | aliaksandr.kartavitski@stud.esdc.lt|
+| Backend  | Volha Platnitskaya| @volha-platnitskaya |volha.platnitskaya@stud.esdc.lt|
+| Curator | Mikhail.Zelianko| @username | Mikhail.Zelianko@esdc.lt|
 
 **Репозиторий:** [ссылка]
-**Канал Teams:** [ссылка]
+**Канал Teams:** [[ссылка](https://teams.microsoft.com/l/chat/19:meeting_ZGE4ODE2YWUtOGU4Yy00NjhjLTlhNmYtYzc2ZmY4ZWViZGQ4@thread.v2/conversations?context=%7B%22contextType%22%3A%22chat%22%7D)]
 **Figma:** [ссылка]
 
 ---
