@@ -12,3 +12,4 @@ Aspiro is a goal-oriented task management system where users choose a predefined
 ```bash
 gradlew.bat bootRun
 ```
+Team Project
