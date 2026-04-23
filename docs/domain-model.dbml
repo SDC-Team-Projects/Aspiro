@@ -1,0 +1,86 @@
+Enum user_role {
+  USER
+  ADMIN
+}
+
+Enum goal_status {
+  ACTIVE
+  COMPLETED
+  OVERDUE
+}
+
+Enum task_status {
+  TODO
+  IN_PROGRESS
+  DONE
+  OVERDUE
+}
+
+Table users {
+  id long [pk, increment]
+  name varchar [not null]
+  email varchar [unique, not null]
+  password varchar [not null]
+  role user_role [not null]
+}
+
+Table templates {
+  id long [pk, increment]
+  title varchar [not null]
+  description text
+}
+
+Table template_stages {
+  id long [pk, increment]
+  title varchar [not null]
+  order_number int [not null]
+  template_id long [not null]
+}
+
+Table template_tasks {
+  id long [pk, increment]
+  title varchar [not null]
+  description text
+  order_number int
+  template_stage_id long [not null]
+}
+
+Table goals {
+  id long [pk, increment]
+  title varchar [not null]
+  deadline timestamp
+  status goal_status [not null]
+  user_id long [not null]
+  template_id long [not null]
+}
+
+Table goal_stages {
+  id long [pk, increment]
+  title varchar [not null]
+  order_number int [not null]
+  goal_id long [not null]
+  template_stage_id long
+}
+
+Table goal_tasks {
+  id long [pk, increment]
+  title varchar [not null]
+  description text
+  status task_status [not null]
+  deadline timestamp
+  order_number int
+  goal_stage_id long [not null]
+  template_task_id long
+}
+
+Ref: template_stages.template_id > templates.id
+Ref: template_tasks.template_stage_id > template_stages.id
+
+Ref: goals.user_id > users.id
+Ref: goals.template_id > templates.id
+
+Ref: goal_stages.goal_id > goals.id
+Ref: goal_stages.template_stage_id > template_stages.id
+
+Ref: goal_tasks.goal_stage_id > goal_stages.id
+Ref: goal_tasks.template_task_id > template_tasks.id
