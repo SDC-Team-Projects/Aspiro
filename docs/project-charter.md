@@ -6,12 +6,13 @@
 
 | Роль | Имя | GitHub | Email |
 |------|-----|--------|-------|
-| Team Lead | Aliaksandr Kartavitski | @cherrySunset | aliaksandr.kartavitski@stud.esdc.lt |
-| Backend | Volha Platnitskaya | @volha-platnitskaya | volha.platnitskaya@stud.esdc.lt |
+| Team Lead  + Backend   | Aliaksandr Kartavitski | @cherrySunset |  aliaksandr.kartavitski@stud.esdc.lt|
+| Backend  | Volha Platnitskaya| @volha-platnitskaya |volha.platnitskaya@stud.esdc.lt|
+| Curator | | | |
 
 **Репозиторий:** [Aspiro](https://github.com/SDC-Team-Projects/Aspiro)\
 **Канал Teams:** [Teams](https://teams.microsoft.com/l/chat/19:meeting_ZGE4ODE2YWUtOGU4Yy00NjhjLTlhNmYtYzc2ZmY4ZWViZGQ4@thread.v2/conversations?context=%7B%22contextType%22%3A%22chat%22%7D)\
-**Figma:** [Figma](https://www.figma.com/design/NnNeOSrpi9cj085vJP3GFk/Untitled?node-id=0-1&t=7JVdCv4gijuxxtbi-1)
+**Figma:** [Figma](https://www.figma.com/design/NnNeOSrpi9cj085vJP3GFk/Untitled?node-id%3D0-1%26t%3D7JVdCv4gijuxxtbi-1)
 
 ---
 
@@ -40,13 +41,17 @@ _Как проект решает эту проблему? (2-3 предложе
 ## Scope проекта
 
 ### В MVP (к защите)
-- [ ] Функция 1
-- [ ] Функция 2
-- [ ] Функция 3
+-  Авторизация и аутентификация (роли User и Admin)
+-  Панель администратора: создание и управление шаблонами путей (добавление этапов и задач)
+-  Панель пользователя: создание цели строго на основе готового шаблона
+- Трекинг прогресса: просмотр структуры цели и отметка задач статусами (todo / done)
+- Базовая аналитика пользователя: автоматический расчет % выполнения этапов и дашборд
 
 ### Вне MVP (после курса)
-- [ ] Функция 4
-- [ ] Функция 5
+-  Умные текстовые рекомендации системы ("Срок слишком короткий", "Вы отстаете от темпа")
+-  Расширенная глобальная аналитика для админа (статистика по всем пользователям и целям)
+
+- Система оценки рисков просрочки дедлайна (low / medium / high risk)
 
 ---
 
@@ -57,7 +62,7 @@ _Как проект решает эту проблему? (2-3 предложе
 | Backend | Java  |
 | Frontend | React  |
 | База данных | PostgreSQL |
-| Хостинг | AWS |
+| Хостинг | AWS  |
 | CI/CD | GitHub Actions |
 
 ---
@@ -99,5 +104,6 @@ _Задача считается выполненной, если выполне
 
 | Участник | Дата | Подпись |
 |----------|------|---------|
-| Ольга | | Согласен(а) |
-| Александр | | Согласен(а) |
+|Aliaksandr Kartavitski | | Согласен(а) |
+|Volha Platnitskaya | | Согласен(а) |
+| | |  |
