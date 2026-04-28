@@ -1,6 +1,6 @@
 package com.capcom.aspiro.domain.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +18,8 @@ import lombok.NoArgsConstructor;
 public class Goal {
     private Long id;
     private String title;
-    private LocalDateTime deadline;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private GoalStatus status;
 
     private User user;

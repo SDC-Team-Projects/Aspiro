@@ -1,6 +1,6 @@
 package com.capcom.aspiro.domain.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import com.capcom.aspiro.domain.model.enums.TaskStatus;
 
@@ -18,7 +18,8 @@ public class GoalTask {
     private String title;
     private String description;
     private TaskStatus status;
-    private LocalDateTime deadline;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private Integer orderNumber;
 
     private GoalStage goalStage;

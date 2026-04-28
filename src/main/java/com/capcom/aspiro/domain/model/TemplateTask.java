@@ -14,5 +14,8 @@ public class TemplateTask {
     private String title;
     private String description;
     private Integer orderNumber;
+    private Integer daysOffset;
+    private Integer durationDays;
+
     private TemplateStage templateStage;
 }
