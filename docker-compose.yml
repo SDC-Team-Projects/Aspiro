@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: aspiro-postgres
+    environment:
+      POSTGRES_DB: aspiro
+      POSTGRES_USER: aspiro
+      POSTGRES_PASSWORD: aspiro
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
