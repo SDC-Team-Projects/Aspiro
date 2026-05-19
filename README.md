@@ -36,6 +36,114 @@ After that, the user works only with their own goal data.
 ```bash
 gradlew.bat build
 gradlew.bat bootRun
+
 ```
+
+#### Docker
+
+Start containers in background:
+
+```bash
+docker compose up -d
+```
+
+Stop containers:
+
+```bash
+docker compose down
+```
+
+Restart containers:
+
+```bash
+docker compose restart
+```
+
+Show running containers:
+
+```bash
+docker ps
+```
+
+Show logs:
+
+```bash
+docker compose logs
+```
+
+Live logs:
+
+```bash
+docker compose logs -f
+```
+
+Rebuild containers:
+
+```bash
+docker compose up --build
+```
+
+Remove containers and volumes:
+
+```bash
+docker compose down -v
+```
+
+---
+
+#### PostgreSQL
+
+Connect to PostgreSQL container:
+
+```bash
+docker exec -it aspiro-postgres psql -U aspiro -d aspiro
+```
+
+Show tables:
+
+```sql
+\dt
+```
+
+Describe table:
+
+```sql
+\d users
+```
+
+Exit PostgreSQL:
+
+```sql
+\q
+```
+
+---
+
+#### Docker Utilities
+
+Show all containers:
+
+```bash
+docker ps -a
+```
+
+Show Docker volumes:
+
+```bash
+docker volume ls
+```
+
+Remove stopped containers:
+
+```bash
+docker container prune
+```
+
+Show PostgreSQL container logs:
+
+```bash
+docker logs aspiro-postgres
+```
+
 
 
