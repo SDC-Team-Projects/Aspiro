@@ -1,138 +1,152 @@
-## Database Overview
+# Database Overview
 
-```md
-This database is designed for a Task and Project Management system.
+This database is designed for a goal-oriented task management system.
 
-The database is divided into two layers: templates and goals.  
-A user selects a template, which contains a title, description, and a set of stages with tasks.  
+The system is divided into two layers:
 
-When a template is selected, a personal instance of it is created as a goal.  
-All stages and tasks are copied into this goal.  
+- **Template layer** — predefined structures created by admin
+- **Goal layer** — user-specific instances created from templates
 
-This allows users to work with their own independent copy of tasks without modifying the original template.
+Templates do not store real dates.  
+Template tasks store relative timing using `days_offset` and `duration_days`.
+
+When a user creates a goal, the system calculates real dates for goal tasks based on the goal start date.
 
 ---
 
-## Tables and Description
+## Enums
 
-```text
-Enum user_role {
-  USER
-  ADMIN
-}
+### user_role
+- USER
+- ADMIN
 
-Enum goal_status {
-  ACTIVE
-  COMPLETED
-  OVERDUE
-}
+### goal_status
+- ACTIVE
+- COMPLETED
+- OVERDUE
 
-Enum task_status {
-  TODO
-  IN_PROGRESS
-  DONE
-  OVERDUE
-}
-```
-### Users
+### task_status
+- TODO
+- IN_PROGRESS
+- DONE
+- OVERDUE
 
-Stores application users and their roles.
-Table users {
-  id long [pk, increment]
-  name varchar [not null]
-  email varchar [unique, not null]
-  password varchar [not null]
-  role user_role [not null]
-}
+---
 
-### Templates
+## user
 
-Predefined goal templates with stages and tasks.
-Table templates {
-  id long [pk, increment]
-  title varchar [not null]
-  description text
-}
+|  Column  |   Type    |     Description    |
+|----------|-----------|--------------------|
+| id       | BIGINT    | PK                 |
+| name     | VARCHAR   | Not null           |
+| email    | VARCHAR   | Unique, not null   |
+| password | VARCHAR   | Not null           |
+| role     | ENUM      | USER, ADMIN        |
 
-### Template Stages
+---
 
-Defines stages within a template.
-Table template_stages {
-  id long [pk, increment]
-  title varchar [not null]
-  order_number int [not null]
-  template_id long [not null]
-}
+## templates
 
-### Template Tasks
+|   Column    |   Type  |   Description   |
+|-------------|---------|-----------------|
+| id          | BIGINT  | PK              |
+| title       | VARCHAR | Not null        |
+| description | TEXT    | Nullable        |
 
-Defines tasks within each template stage.
-Table template_tasks {
-  id long [pk, increment]
-  title varchar [not null]
-  description text
-  order_number int
-  template_stage_id long [not null]
-}
+---
 
-### Goals
+## template_stage
 
-Represents user goals created from templates.
-Table goals {
-  id long [pk, increment]
-  title varchar [not null]
-  deadline timestamp
-  status goal_status [not null]
-  user_id long [not null]
-  template_id long [not null]
-}
+|    Column    |   Type  |        Description          |
+|--------------|---------|-----------------------------|
+| id           | BIGINT  | PK                          |
+| title        | VARCHAR | Not null                    |
+| order_number | INT     | Stage order inside template |
+| template_id  | BIGINT  | FK → templates.id           |
 
-### Goal Stages
+---
 
-Represents user-specific stages created from template stages.
-Table goal_stages {
-  id long [pk, increment]
-  title varchar [not null]
-  order_number int [not null]
-  goal_id long [not null]
-  template_stage_id long
-}
+## template_task
 
-### Goal Tasks
+|     Column        |     Type     |            Description              |
+|-------------------|--------------|-------------------------------------|
+| id                | BIGINT       | PK                                  |
+| title             | VARCHAR      | Not null                            |
+| description       | TEXT         | Nullable                            |
+| order_number      | INT          | Task order inside template stage    |
+| days_offset       | INT          | Number of days from goal start date |
+| duration_days     | INT          | Task duration in days               |
+| template_stage_id | BIGINT       | FK → template_stages.id             |
 
-Represents user-specific tasks with progress tracking.
-Table goal_tasks {
-  id long [pk, increment]
-  title varchar [not null]
-  description text
-  status task_status [not null]
-  deadline timestamp
-  order_number int
-  goal_stage_id long [not null]
-  template_task_id long
-}
+---
 
-## Technical Relationships
-Ref: template_stages.template_id > templates.id
-Ref: template_tasks.template_stage_id > template_stages.id
+## goal
 
-Ref: goals.user_id > users.id
-Ref: goals.template_id > templates.id
+|     Column    |     Type    |        Description         |
+|---------------|-------------|----------------------------|
+| id            | BIGINT      | PK                         |
+| title         | VARCHAR     | Not null                   |
+| start_date    | DATE        | Goal start date            |
+| end_date      | DATE        | Calculated goal end date   |
+| status        | ENUM        | ACTIVE, COMPLETED, OVERDUE |
+| user_id       | BIGINT      | FK → users.id              |
+| template_id   | BIGINT      | FK → templates.id          |
 
-Ref: goal_stages.goal_id > goals.id
-Ref: goal_stages.template_stage_id > template_stages.id
+---
 
-Ref: goal_tasks.goal_stage_id > goal_stages.id
-Ref: goal_tasks.template_task_id > template_tasks.id
+## goal_stage
 
+|   Column          |    Type   |      Description        |
+|-------------------|-----------|-------------------------|
+| id                | BIGINT    | PK                      |
+| title             | VARCHAR   | Not null                |
+| order_number      | INT       | Stage order inside goal |
+| goal_id           | BIGINT    | FK → goals.id           |
+| template_stage_id | BIGINT    | FK → template_stages.id |
 
-## Relationships 
-- A User can have multiple Goals
-- A Goal is created based on a Template
-- A Template contains multiple TemplateStages
-- A TemplateStage contains multiple TemplateTasks
-- A Goal contains multiple GoalStages
-- A GoalStage contains multiple GoalTasks
+---
 
-When a user creates a goal from a template, stages and tasks are generated based on the template structure.
-Each goal maintains its own independent progress and task states.
+## goal_task
+
+| Column           | Type     |                   Description                   |
+|------------------|----------|-------------------------------------------------|
+| id               | BIGINT   | PK                                              |
+| title            | VARCHAR  | Not null                                        |
+| description      | TEXT     | Nullable                                        |
+| status           | ENUM     | TODO, IN_PROGRESS, DONE, OVERDUE                |
+| start_date       | DATE     | Calculated from goal start date and task offset |
+| end_date         | DATE     | Calculated from start date and task duration    |
+| order_number     | INT      | Task order inside goal stage                    |
+| goal_stage_id    | BIGINT   | FK → goal_stages.id                             |
+| template_task_id | BIGINT   | FK → template_tasks.id                          |
+
+---
+
+## Relationships
+
+- `users` 1 : N `goals` — one user can have many goals
+- `templates` 1 : N `goals` — one template can be used for many goals
+- `templates` 1 : N `template_stages` — one template contains many template stages
+- `template_stages` 1 : N `template_tasks` — one template stage contains many template tasks
+- `goals` 1 : N `goal_stages` — one goal contains many goal stages
+- `goal_stages` 1 : N `goal_tasks` — one goal stage contains many goal tasks
+- `template_stages` 1 : N `goal_stages` — one template stage can be copied into many goal stages
+- `template_tasks` 1 : N `goal_tasks` — one template task can be copied into many goal tasks
+
+---
+
+## Data Flow
+
+1. Admin creates templates with stages and tasks
+2. Template tasks store relative timing:
+   - `days_offset`
+   - `duration_days`
+3. User selects a template and sets a goal start date
+4. System creates a goal
+5. Template stages are copied into goal stages
+6. Template tasks are copied into goal tasks
+7. Goal task dates are calculated:
+   - `goal_task.start_date = goal.start_date + template_task.days_offset`
+   - `goal_task.end_date = goal_task.start_date + template_task.duration_days`
+8. Goal end date can be calculated from the latest goal task end date
+9. User works only with goal data: task status, progress, and dates
