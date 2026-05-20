@@ -4,5 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.capcom.aspiro.domain.model.TemplateStage;
 
+import java.util.List;
+
 public interface TemplateStageRepository extends JpaRepository<TemplateStage, Long> {
+    List<TemplateStage> findByTemplateIdOrderByOrderNumber(
+            Long templateId
+    );
 }
