@@ -33,10 +33,7 @@ public class GoalServiceImpl implements GoalService {
     private final UserRepository userRepository;
 
     @Override
-    public GoalResponse createGoal(
-            CreateGoalRequest request
-    ) {
-
+    public GoalResponse createGoal(CreateGoalRequest request) {
         /*
          TEMPORARY USER
          UNTIL JWT IS IMPLEMENTED
@@ -48,13 +45,12 @@ public class GoalServiceImpl implements GoalService {
                         )
                 );
 
-        Template template = templateRepository.findById(
-                request.getTemplateId()
-        ).orElseThrow(() ->
-                new ResourceNotFoundException(
-                        "Template not found"
-                )
-        );
+        Template template = templateRepository.findById(request.getTemplateId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Template not found"
+                        )
+                );
 
         Goal goal = Goal.builder()
                 .title(request.getTitle())
@@ -83,12 +79,7 @@ public class GoalServiceImpl implements GoalService {
 
         return goalRepository.findByUserId(user.getId())
                 .stream()
-                .map(goal ->
-                        GoalMapper.toResponse(
-                                goal,
-                                calculateGoalProgress(goal)
-                        )
-                )
+                .map(goal -> GoalMapper.toResponse(goal, calculateGoalProgress(goal)))
                 .toList();
     }
 
@@ -102,22 +93,12 @@ public class GoalServiceImpl implements GoalService {
                         )
                 );
 
-        return GoalMapper.toResponse(
-                goal,
-                calculateGoalProgress(goal)
-        );
+        return GoalMapper.toResponse(goal, calculateGoalProgress(goal));
     }
 
-    private void copyStagesAndTasks(
-            Goal goal,
-            Template template
-    ) {
+    private void copyStagesAndTasks(Goal goal, Template template) {
 
-        List<TemplateStage> templateStages =
-                templateStageRepository
-                        .findByTemplateIdOrderByOrderNumber(
-                                template.getId()
-                        );
+        List<TemplateStage> templateStages = templateStageRepository.findByTemplateIdOrderByOrderNumber(template.getId());
 
         LocalDate latestEndDate = goal.getStartDate();
 
@@ -132,24 +113,14 @@ public class GoalServiceImpl implements GoalService {
 
             goalStage = goalStageRepository.save(goalStage);
 
-            List<TemplateTask> templateTasks =
-                    templateTaskRepository
-                            .findByTemplateStageIdOrderByOrderNumber(
-                                    templateStage.getId()
-                            );
+            List<TemplateTask> templateTasks = templateTaskRepository.findByTemplateStageIdOrderByOrderNumber(templateStage.getId());
 
             for (TemplateTask templateTask : templateTasks) {
 
-                LocalDate taskStart =
-                        goal.getStartDate()
-                                .plusDays(
-                                        templateTask.getDaysOffset()
-                                );
+                LocalDate taskStart = goal.getStartDate()
+                                        .plusDays(templateTask.getDaysOffset());
 
-                LocalDate taskEnd =
-                        taskStart.plusDays(
-                                templateTask.getDurationDays()
-                        );
+                LocalDate taskEnd = taskStart.plusDays(templateTask.getDurationDays());
 
                 GoalTask goalTask = GoalTask.builder()
                         .title(templateTask.getTitle())
@@ -175,24 +146,15 @@ public class GoalServiceImpl implements GoalService {
         goalRepository.save(goal);
     }
 
-    private Integer calculateGoalProgress(
-            Goal goal
-    ) {
+    private Integer calculateGoalProgress(Goal goal) {
 
-        List<GoalStage> stages =
-                goalStageRepository.findByGoalId(
-                        goal.getId()
-                );
+        List<GoalStage> stages = goalStageRepository.findByGoalId(goal.getId());
 
         List<GoalTask> allTasks = new ArrayList<>();
 
         for (GoalStage stage : stages) {
 
-            allTasks.addAll(
-                    goalTaskRepository.findByGoalStageId(
-                            stage.getId()
-                    )
-            );
+            allTasks.addAll(goalTaskRepository.findByGoalStageId(stage.getId()));
         }
 
         if (allTasks.isEmpty()) {
@@ -200,13 +162,9 @@ public class GoalServiceImpl implements GoalService {
         }
 
         long completedTasks = allTasks.stream()
-                .filter(task ->
-                        task.getStatus() == TaskStatus.DONE
-                )
+                .filter(task -> task.getStatus() == TaskStatus.DONE)
                 .count();
 
-        return (int) (
-                (completedTasks * 100) / allTasks.size()
-        );
+        return (int) ((completedTasks * 100) / allTasks.size());
     }
 }

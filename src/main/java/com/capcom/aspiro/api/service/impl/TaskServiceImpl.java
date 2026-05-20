@@ -60,22 +60,17 @@ public class TaskServiceImpl implements TaskService {
 
         Goal goal = task.getGoalStage().getGoal();
 
-        List<GoalStage> stages =
-                goalStageRepository.findByGoalId(
-                        goal.getId()
-                );
+        List<GoalStage> stages = goalStageRepository.findByGoalId(goal.getId());
 
         boolean allCompleted = true;
 
         for (GoalStage stage : stages) {
 
-            List<GoalTask> tasks =
-                    goalTaskRepository.findByGoalStageId(stage.getId());
+            List<GoalTask> tasks = goalTaskRepository.findByGoalStageId(stage.getId());
 
             for (GoalTask currentTask : tasks) {
 
                 if (currentTask.getStatus() != TaskStatus.DONE) {
-
                     allCompleted = false;
                     break;
                 }
