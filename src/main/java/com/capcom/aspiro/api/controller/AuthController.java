@@ -13,6 +13,8 @@ import com.capcom.aspiro.api.service.interfaces.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -39,5 +41,12 @@ public class AuthController {
         return ResponseEntity.ok(
                 authService.login(request)
         );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+
+        return ResponseEntity.ok()
+                .body(Map.of("message", "Logged out successfully"));
     }
 }
