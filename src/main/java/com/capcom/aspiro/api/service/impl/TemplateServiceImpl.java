@@ -2,6 +2,7 @@ package com.capcom.aspiro.api.service.impl;
 
 import java.util.List;
 
+import com.capcom.aspiro.api.dto.request.CreateTemplateRequest;
 import org.springframework.stereotype.Service;
 
 import com.capcom.aspiro.api.dto.request.UpdateTemplateRequest;
@@ -33,6 +34,19 @@ public class TemplateServiceImpl implements TemplateService {
 
         Template template = templateRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Template not found"));
+
+        return mapToResponse(template);
+    }
+
+    @Override
+    public TemplateResponse createTemplate(CreateTemplateRequest request) {
+
+        Template template = Template.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .build();
+
+        template = templateRepository.save(template);
 
         return mapToResponse(template);
     }

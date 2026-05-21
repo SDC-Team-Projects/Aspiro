@@ -1,5 +1,8 @@
 package com.capcom.aspiro.api.controller;
 
+import com.capcom.aspiro.api.dto.request.CreateTemplateTaskRequest;
+import com.capcom.aspiro.api.service.interfaces.TemplateTaskService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +18,18 @@ import lombok.RequiredArgsConstructor;
 public class TemplateStageController {
 
     private final TemplateStageService templateStageService;
+    private final TemplateTaskService templateTaskService;
+
+    @PostMapping("/{id}/tasks")
+    public ResponseEntity<Void> createTask(
+            @PathVariable Long id,
+            @Valid @RequestBody CreateTemplateTaskRequest request
+    ) {
+
+        templateTaskService.createTask(id, request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 
     @PatchMapping("/{id}")
     public ResponseEntity<Void> updateStage(
