@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.capcom.aspiro.api.dto.request.CreateGoalRequest;
 import com.capcom.aspiro.api.dto.response.GoalResponse;
+import com.capcom.aspiro.api.dto.response.GoalDetailedResponse;
 import com.capcom.aspiro.api.exception.custom.ResourceNotFoundException;
 import com.capcom.aspiro.api.mapper.GoalMapper;
 import com.capcom.aspiro.api.service.interfaces.GoalService;
@@ -64,7 +65,7 @@ public class GoalServiceImpl implements GoalService {
 
         copyStagesAndTasks(goal, template);
 
-        return GoalMapper.toResponse(goal, 0);
+        return GoalMapper.toSummaryResponse(goal, 0);
     }
 
     @Override
@@ -79,12 +80,12 @@ public class GoalServiceImpl implements GoalService {
 
         return goalRepository.findByUserId(user.getId())
                 .stream()
-                .map(goal -> GoalMapper.toResponse(goal, calculateGoalProgress(goal)))
+                .map(goal -> GoalMapper.toSummaryResponse(goal, calculateGoalProgress(goal)))
                 .toList();
     }
 
     @Override
-    public GoalResponse getGoalById(Long id) {
+    public GoalDetailedResponse getGoalById(Long id) {
 
         Goal goal = goalRepository.findById(id)
                 .orElseThrow(() ->
@@ -93,7 +94,15 @@ public class GoalServiceImpl implements GoalService {
                         )
                 );
 
-        return GoalMapper.toResponse(goal, calculateGoalProgress(goal));
+        List<GoalStage> stages = goalStageRepository.findByGoalId(goal.getId());
+
+        for (GoalStage stage : stages) {
+
+            stage.setGoalTasks(
+                    goalTaskRepository.findByGoalStageId(stage.getId())
+            );
+        }
+        return GoalMapper.toDetailedResponse(goal, calculateGoalProgress(goal), stages);
     }
 
     private void copyStagesAndTasks(Goal goal, Template template) {

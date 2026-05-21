@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class TaskResponse {
+public class GoalTaskResponse {
 
     private Long id;
 
