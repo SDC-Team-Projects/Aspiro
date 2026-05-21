@@ -1,13 +1,13 @@
 package com.capcom.aspiro.api.mapper;
 
-import com.capcom.aspiro.api.dto.response.TaskResponse;
+import com.capcom.aspiro.api.dto.response.GoalTaskResponse;
 import com.capcom.aspiro.domain.model.GoalTask;
 
 public class TaskMapper {
 
-    public static TaskResponse toResponse(GoalTask task) {
+    public static GoalTaskResponse toResponse(GoalTask task) {
 
-        return TaskResponse.builder()
+        return GoalTaskResponse.builder()
                 .id(task.getId())
                 .title(task.getTitle())
                 .status(task.getStatus())

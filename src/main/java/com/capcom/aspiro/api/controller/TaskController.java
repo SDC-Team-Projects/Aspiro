@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.capcom.aspiro.api.dto.request.UpdateTaskStatusRequest;
-import com.capcom.aspiro.api.dto.response.TaskResponse;
+import com.capcom.aspiro.api.dto.response.GoalTaskResponse;
 import com.capcom.aspiro.api.service.interfaces.TaskService;
 
 import jakarta.validation.Valid;
@@ -18,7 +18,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @PatchMapping("/{id}")
-    public ResponseEntity<TaskResponse> updateTaskStatus(
+    public ResponseEntity<GoalTaskResponse> updateTaskStatus(
             @PathVariable Long id,
             @Valid @RequestBody UpdateTaskStatusRequest request
     ) {

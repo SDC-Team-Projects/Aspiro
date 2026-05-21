@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.capcom.aspiro.api.dto.request.UpdateTaskStatusRequest;
-import com.capcom.aspiro.api.dto.response.TaskResponse;
+import com.capcom.aspiro.api.dto.response.GoalTaskResponse;
 import com.capcom.aspiro.api.exception.custom.ResourceNotFoundException;
 import com.capcom.aspiro.api.mapper.TaskMapper;
 import com.capcom.aspiro.api.service.interfaces.TaskService;
@@ -30,7 +30,7 @@ public class TaskServiceImpl implements TaskService {
     private final GoalRepository goalRepository;
 
     @Override
-    public TaskResponse updateTaskStatus(Long taskId, UpdateTaskStatusRequest request) {
+    public GoalTaskResponse updateTaskStatus(Long taskId, UpdateTaskStatusRequest request) {
 
         GoalTask task = goalTaskRepository.findById(taskId)
                 .orElseThrow(() ->
