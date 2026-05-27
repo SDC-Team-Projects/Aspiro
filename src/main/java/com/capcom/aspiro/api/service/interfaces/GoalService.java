@@ -7,9 +7,9 @@ import com.capcom.aspiro.api.dto.response.GoalResponse;
 
 public interface GoalService {
 
-    GoalResponse createGoal(CreateGoalRequest request);
+    GoalResponse createGoal(CreateGoalRequest request, String userEmail);
 
-    List<GoalResponse> getUserGoals();
+    List<GoalResponse> getUserGoals(String userEmail);
 
-    GoalResponse getGoalById(Long id);
+    GoalResponse getGoalById(Long id, String userEmail);
 }
