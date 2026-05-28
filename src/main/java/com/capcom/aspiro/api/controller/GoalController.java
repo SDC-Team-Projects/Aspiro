@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.capcom.aspiro.api.dto.request.CreateGoalRequest;
 import com.capcom.aspiro.api.dto.response.GoalResponse;
+import com.capcom.aspiro.api.dto.response.GoalDetailedResponse;
+import com.capcom.aspiro.api.dto.response.DataResponse;
 import com.capcom.aspiro.api.service.interfaces.GoalService;
 
 import jakarta.validation.Valid;
@@ -30,15 +32,15 @@ public class GoalController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GoalResponse>> getUserGoals() {
+    public ResponseEntity<DataResponse<GoalResponse>> getUserGoals() {
 
         return ResponseEntity.ok(
-                goalService.getUserGoals()
+                DataResponse.of(goalService.getUserGoals())
         );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GoalResponse> getGoalById(
+    public ResponseEntity<GoalDetailedResponse> getGoalById(
             @PathVariable Long id
     ) {
 

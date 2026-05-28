@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.capcom.aspiro.api.dto.request.CreateGoalRequest;
 import com.capcom.aspiro.api.dto.response.GoalResponse;
+import com.capcom.aspiro.api.dto.response.GoalDetailedResponse;
 
 public interface GoalService {
 
@@ -11,5 +12,5 @@ public interface GoalService {
 
     List<GoalResponse> getUserGoals();
 
-    GoalResponse getGoalById(Long id);
+    GoalDetailedResponse getGoalById(Long id);
 }
