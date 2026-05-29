@@ -3,14 +3,14 @@ package com.capcom.aspiro.api.service.interfaces;
 import java.util.List;
 
 import com.capcom.aspiro.api.dto.request.CreateGoalRequest;
-import com.capcom.aspiro.api.dto.response.GoalResponse;
 import com.capcom.aspiro.api.dto.response.GoalDetailedResponse;
+import com.capcom.aspiro.api.dto.response.GoalResponse;
 
 public interface GoalService {
 
-    GoalResponse createGoal(CreateGoalRequest request);
+    GoalResponse createGoal(CreateGoalRequest request, String userEmail);
 
-    List<GoalResponse> getUserGoals();
+    List<GoalResponse> getUserGoals(String userEmail);
 
-    GoalDetailedResponse getGoalById(Long id);
+    GoalDetailedResponse getGoalById(Long id, String userEmail);
 }

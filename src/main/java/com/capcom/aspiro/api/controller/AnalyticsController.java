@@ -1,14 +1,11 @@
 package com.capcom.aspiro.api.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.capcom.aspiro.api.dto.response.AnalyticsResponse;
 import com.capcom.aspiro.api.service.interfaces.AnalyticsService;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/analytics")
@@ -18,10 +15,11 @@ public class AnalyticsController {
     private final AnalyticsService analyticsService;
 
     @GetMapping
-    public ResponseEntity<AnalyticsResponse> getAnalytics() {
-
+    public ResponseEntity<AnalyticsResponse> getAnalytics(
+            Authentication authentication
+    ) {
         return ResponseEntity.ok(
-                analyticsService.getUserAnalytics()
+                analyticsService.getUserAnalytics(authentication.getName())
         );
     }
 }

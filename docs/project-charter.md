@@ -12,7 +12,7 @@
 
 **Репозиторий:** [Aspiro](https://github.com/SDC-Team-Projects/Aspiro)\
 **Канал Teams:** [Teams](https://teams.microsoft.com/l/chat/19:meeting_ZGE4ODE2YWUtOGU4Yy00NjhjLTlhNmYtYzc2ZmY4ZWViZGQ4@thread.v2/conversations?context=%7B%22contextType%22%3A%22chat%22%7D)\
-**Figma:** [Figma](https://www.figma.com/design/NnNeOSrpi9cj085vJP3GFk/Untitled?node-id%3D0-1%26t%3D7JVdCv4gijuxxtbi-1)
+**Figma:** [Figma](https://www.figma.com/design/vnmW3hPfciIR8GAuEPAR3p/Aspiro?node-id=0-1&t=R24jRXNji9OXicfI-1)
 
 ---
 

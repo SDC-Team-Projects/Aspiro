@@ -117,6 +117,11 @@ Exit PostgreSQL:
 \q
 ```
 
+db launch
+```bash
+.\gradlew bootRun --args="--spring.profiles.active=postgres"
+```
+
 ---
 
 #### Docker Utilities
@@ -144,6 +149,4 @@ Show PostgreSQL container logs:
 ```bash
 docker logs aspiro-postgres
 ```
-
-
 
