@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.capcom.aspiro.api.dto.request.CreateGoalRequest;
+import com.capcom.aspiro.api.dto.response.GoalDetailedResponse;
 import com.capcom.aspiro.api.dto.response.GoalResponse;
 import com.capcom.aspiro.api.service.interfaces.GoalService;
 
@@ -40,7 +41,7 @@ public class GoalController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GoalResponse> getGoalById(
+    public ResponseEntity<GoalDetailedResponse> getGoalById(
             @PathVariable Long id,
             Authentication authentication
     ) {

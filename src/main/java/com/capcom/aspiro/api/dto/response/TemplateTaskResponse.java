@@ -3,11 +3,9 @@ package com.capcom.aspiro.api.dto.response;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @Builder
-public class TemplateResponse {
+public class TemplateTaskResponse {
 
     private Long id;
 
@@ -15,6 +13,9 @@ public class TemplateResponse {
 
     private String description;
 
-    private List<TemplateStageResponse> stages;
+    private Integer orderNumber;
 
+    private Integer daysOffset;
+
+    private Integer durationDays;
 }

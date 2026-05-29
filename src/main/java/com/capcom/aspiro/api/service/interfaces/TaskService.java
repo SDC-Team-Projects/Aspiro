@@ -1,11 +1,11 @@
 package com.capcom.aspiro.api.service.interfaces;
 
 import com.capcom.aspiro.api.dto.request.UpdateTaskStatusRequest;
-import com.capcom.aspiro.api.dto.response.TaskResponse;
+import com.capcom.aspiro.api.dto.response.GoalTaskResponse;
 
 public interface TaskService {
 
-    TaskResponse updateTaskStatus(
+    GoalTaskResponse updateTaskStatus(
             Long taskId,
             UpdateTaskStatusRequest request
     );

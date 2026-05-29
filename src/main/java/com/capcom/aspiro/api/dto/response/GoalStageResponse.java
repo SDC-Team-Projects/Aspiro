@@ -1,20 +1,19 @@
 package com.capcom.aspiro.api.dto.response;
 
+import java.util.List;
+
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @Builder
-public class TemplateResponse {
+public class GoalStageResponse {
 
     private Long id;
 
     private String title;
 
-    private String description;
+    private Integer orderNumber;
 
-    private List<TemplateStageResponse> stages;
-
+    private List<GoalTaskResponse> tasks;
 }

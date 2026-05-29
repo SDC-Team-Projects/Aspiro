@@ -1,12 +1,16 @@
 package com.capcom.aspiro.api.exception;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.capcom.aspiro.api.exception.custom.BadRequestException;
+import com.capcom.aspiro.api.exception.custom.ResourceNotFoundException;
+import com.capcom.aspiro.api.exception.custom.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -16,7 +20,6 @@ public class GlobalExceptionHandler {
     public Map<String, String> handleValidation(
             MethodArgumentNotValidException ex
     ) {
-
         Map<String, String> errors = new HashMap<>();
 
         ex.getBindingResult()
@@ -37,7 +40,6 @@ public class GlobalExceptionHandler {
             RuntimeException ex,
             HttpServletRequest request
     ) {
-
         Map<String, String> error = new HashMap<>();
 
         error.put("message", ex.getMessage());
@@ -45,17 +47,42 @@ public class GlobalExceptionHandler {
 
         return error;
     }
-        @ExceptionHandler(org.springframework.security.authorization.AuthorizationDeniedException.class)
-        @ResponseStatus(HttpStatus.FORBIDDEN)
-        public Map<String, String> handleAuthorizationDenied(
-                org.springframework.security.authorization.AuthorizationDeniedException ex,
-                HttpServletRequest request
-) {
-    Map<String, String> error = new HashMap<>();
 
-    error.put("message", "Access denied");
-    error.put("path", request.getRequestURI());
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Map<String, String> handleAuthorizationDenied(
+            AuthorizationDeniedException ex,
+            HttpServletRequest request
+    ) {
+        Map<String, String> error = new HashMap<>();
 
-    return error;
-}
+        error.put("message", "Access denied");
+        error.put("path", request.getRequestURI());
+
+        return error;
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleNotFound(
+            ResourceNotFoundException ex
+    ) {
+        return Map.of("error", ex.getMessage());
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleBadRequest(
+            BadRequestException ex
+    ) {
+        return Map.of("error", ex.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Map<String, String> handleUnauthorized(
+            UnauthorizedException ex
+    ) {
+        return Map.of("error", ex.getMessage());
+    }
 }

@@ -1,24 +1,22 @@
 package com.capcom.aspiro.api.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.capcom.aspiro.api.dto.request.LoginRequest;
+import com.capcom.aspiro.api.dto.request.RefreshTokenRequest;
 import com.capcom.aspiro.api.dto.request.RegisterRequest;
 import com.capcom.aspiro.api.dto.response.AuthResponse;
 import com.capcom.aspiro.api.dto.response.UserProfileResponse;
 import com.capcom.aspiro.api.service.interfaces.AuthService;
-import com.capcom.aspiro.api.dto.response.UserProfileResponse;
-import org.springframework.security.core.Authentication;
-import com.capcom.aspiro.api.dto.request.RefreshTokenRequest;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -33,7 +31,6 @@ public class AuthController {
     public ResponseEntity<Void> register(
             @Valid @RequestBody RegisterRequest request
     ) {
-
         authService.register(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -44,27 +41,35 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(
             @Valid @RequestBody LoginRequest request
     ) {
-
-        return ResponseEntity.ok(
-                authService.login(request)
-        );
+        return ResponseEntity.ok(authService.login(request));
     }
 
     @Operation(
-        summary = "Get current authenticated user",
-        security = @SecurityRequirement(name = "bearerAuth")
+            summary = "Get current authenticated user",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping("/me")
-        public ResponseEntity<UserProfileResponse> me(Authentication authentication) {
-            return ResponseEntity.ok(
-                    authService.getCurrentUser(authentication.getName())
-            );
-        }
+    public ResponseEntity<UserProfileResponse> me(
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(
+                authService.getCurrentUser(authentication.getName())
+        );
+    }
 
-        @PostMapping("/refresh")
-            public ResponseEntity<AuthResponse> refresh(
-                    @Valid @RequestBody RefreshTokenRequest request
-            ) {
-                return ResponseEntity.ok(authService.refreshToken(request));
-        }
+    @Operation(summary = "Refresh JWT access token")
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(
+            @Valid @RequestBody RefreshTokenRequest request
+    ) {
+        return ResponseEntity.ok(authService.refreshToken(request));
+    }
+
+    @Operation(summary = "Logout user")
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout() {
+        return ResponseEntity.ok(
+                Map.of("message", "Logged out successfully")
+        );
+    }
 }
