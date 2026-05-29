@@ -4,5 +4,5 @@ import com.capcom.aspiro.api.dto.response.AnalyticsResponse;
 
 public interface AnalyticsService {
 
-    AnalyticsResponse getUserAnalytics();
+    AnalyticsResponse getUserAnalytics(String userEmail);
 }

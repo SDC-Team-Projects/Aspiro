@@ -32,12 +32,12 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     private final GoalTaskRepository goalTaskRepository;
 
     @Override
-    public AnalyticsResponse getUserAnalytics() {
+    public AnalyticsResponse getUserAnalytics(String userEmail) {
         /*
          TEMP USER
          REPLACE AFTER JWT
         */
-        User user = userRepository.findById(1L)
+        User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "User not found"
