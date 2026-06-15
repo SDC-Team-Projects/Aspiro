@@ -5,6 +5,7 @@ import com.capcom.aspiro.api.exception.custom.ResourceNotFoundException;
 import com.capcom.aspiro.api.exception.custom.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,20 @@ public class GlobalExceptionHandler {
                 );
 
         return errors;
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleInvalidJson(
+            HttpMessageNotReadableException ex,
+            HttpServletRequest request
+    ) {
+        Map<String, String> error = new HashMap<>();
+
+        error.put("message", "Malformed JSON request");
+        error.put("path", request.getRequestURI());
+
+        return error;
     }
 
     @ExceptionHandler(RuntimeException.class)
