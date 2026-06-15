@@ -112,7 +112,6 @@ class GoalServiceImplTest {
 
     @Test
     void createGoal_success_copiesTemplate_and_setsEndDateToLatest() {
-        // Arrange user and template
         var userEmail = "u@x.com";
         User user = User.builder().id(100L).email(userEmail).build();
         Template template = Template.builder().id(200L).title("T").build();
@@ -120,7 +119,6 @@ class GoalServiceImplTest {
         when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
         when(templateRepository.findById(200L)).thenReturn(Optional.of(template));
 
-        // Goal save: first call assigns ID, second just returns goal
         when(goalRepository.save(any(Goal.class))).thenAnswer(inv -> {
             Goal g = inv.getArgument(0);
             if (g.getId() == null) {
@@ -129,29 +127,24 @@ class GoalServiceImplTest {
             return g;
         });
 
-        // Template stages in order
         TemplateStage ts1 = TemplateStage.builder().id(400L).title("S1").orderNumber(1).template(template).build();
         TemplateStage ts2 = TemplateStage.builder().id(401L).title("S2").orderNumber(2).template(template).build();
         when(templateStageRepository.findByTemplateIdOrderByOrderNumber(200L)).thenReturn(List.of(ts1, ts2));
 
-        // Saving goal stages assigns ids
         when(goalStageRepository.save(any(GoalStage.class))).thenAnswer(inv -> {
             GoalStage s = inv.getArgument(0);
             if (s.getId() == null) s.setId(500L + (long) s.getOrderNumber());
             return s;
         });
 
-        // Template tasks per stage
         // Start date will be 2024-01-01; latest end expected: start + 5 days offset + 3 duration = 2024-01-09
         TemplateTask tt11 = TemplateTask.builder().id(600L).title("A").orderNumber(1).daysOffset(0).durationDays(1).templateStage(ts1).build();
         TemplateTask tt21 = TemplateTask.builder().id(601L).title("B").orderNumber(1).daysOffset(5).durationDays(3).templateStage(ts2).build();
         when(templateTaskRepository.findByTemplateStageIdOrderByOrderNumber(400L)).thenReturn(List.of(tt11));
         when(templateTaskRepository.findByTemplateStageIdOrderByOrderNumber(401L)).thenReturn(List.of(tt21));
 
-        // Stubbing for progress calculation during mapping
         when(goalStageRepository.findByGoalId(300L)).thenReturn(List.of());
 
-        // Act
         CreateGoalRequest req = new CreateGoalRequest();
         req.setTemplateId(200L);
         req.setTitle("G");
@@ -159,7 +152,6 @@ class GoalServiceImplTest {
 
         var summary = goalService.createGoal(req, userEmail);
 
-        // Assert
         assertThat(summary.getTitle()).isEqualTo("G");
 
         // Verify that the goal's endDate was set to 2024-01-09 on the second save

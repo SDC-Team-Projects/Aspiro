@@ -28,14 +28,12 @@ class TemplateRepositoriesDataJpaTest {
 
     @Test
     void saveAndFind_Template_withStagesAndTasks_andCustomFinders() {
-        // Create template
         Template template = Template.builder()
                 .title("Template A")
                 .description("Desc")
                 .build();
         template = templateRepository.save(template);
 
-        // Create two stages with different orderNumbers
         TemplateStage s1 = TemplateStage.builder()
                 .title("Stage 1")
                 .orderNumber(2)
@@ -49,7 +47,6 @@ class TemplateRepositoriesDataJpaTest {
         s1 = templateStageRepository.save(s1);
         s2 = templateStageRepository.save(s2);
 
-        // Tasks for stage s2 (order 1)
         TemplateTask t21 = TemplateTask.builder()
                 .title("Task A")
                 .description("DA")
@@ -69,15 +66,13 @@ class TemplateRepositoriesDataJpaTest {
         templateTaskRepository.saveAll(List.of(t21, t22));
 
         // Verify custom stage finder ordering
-        List<TemplateStage> stages = templateStageRepository
-                .findByTemplateIdOrderByOrderNumber(template.getId());
+        List<TemplateStage> stages = templateStageRepository.findByTemplateIdOrderByOrderNumber(template.getId());
         assertThat(stages).hasSize(2);
         assertThat(stages.get(0).getOrderNumber()).isEqualTo(1);
         assertThat(stages.get(1).getOrderNumber()).isEqualTo(2);
 
         // Verify custom task finder ordering
-        List<TemplateTask> tasks = templateTaskRepository
-                .findByTemplateStageIdOrderByOrderNumber(s2.getId());
+        List<TemplateTask> tasks = templateTaskRepository.findByTemplateStageIdOrderByOrderNumber(s2.getId());
         assertThat(tasks).hasSize(2);
         assertThat(tasks.get(0).getOrderNumber()).isEqualTo(1);
         assertThat(tasks.get(1).getOrderNumber()).isEqualTo(2);

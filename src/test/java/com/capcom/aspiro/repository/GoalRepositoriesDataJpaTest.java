@@ -29,7 +29,6 @@ class GoalRepositoriesDataJpaTest {
 
     @Test
     void saveAndFind_Goal_withStagesAndTasks_andCustomFinders() {
-        // Create user and template
         User user = User.builder()
                 .name("U")
                 .email("u@example.com")
@@ -44,7 +43,6 @@ class GoalRepositoriesDataJpaTest {
                 .build();
         template = templateRepository.save(template);
 
-        // Create goal
         Goal goal = Goal.builder()
                 .title("G")
                 .startDate(LocalDate.now())
@@ -54,7 +52,6 @@ class GoalRepositoriesDataJpaTest {
                 .build();
         goal = goalRepository.save(goal);
 
-        // Create template stage and template tasks to satisfy not-null FKs
         TemplateStage tStage = TemplateStage.builder()
                 .title("TS1")
                 .orderNumber(1)
@@ -81,7 +78,6 @@ class GoalRepositoriesDataJpaTest {
         tt1 = templateTaskRepository.save(tt1);
         tt2 = templateTaskRepository.save(tt2);
 
-        // Create stage and tasks linked to template entities
         GoalStage stage = GoalStage.builder()
                 .title("S1")
                 .orderNumber(1)

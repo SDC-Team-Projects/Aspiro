@@ -50,7 +50,6 @@ public class FullFlowIntegrationTest {
 
     @Test
     void fullUserFlow_register_login_createTemplate_createGoal_and_getAnalytics() throws Exception {
-        // register user
         RegisterRequest reg = new RegisterRequest();
         reg.setName("Integration User");
         reg.setEmail("int@example.com");
@@ -61,7 +60,6 @@ public class FullFlowIntegrationTest {
                 .content(mapper.writeValueAsString(reg)))
                 .andExpect(status().isCreated());
 
-        // login
         LoginRequest login = new LoginRequest();
         login.setEmail("int@example.com");
         login.setPassword("secret123");
@@ -95,7 +93,6 @@ public class FullFlowIntegrationTest {
         assertThat(templateResp).containsKey("id");
         Integer templateId = (Integer) templateResp.get("id");
 
-        // create a goal from template
         CreateGoalRequest cg = new CreateGoalRequest();
         cg.setTemplateId(templateId.longValue());
         cg.setTitle("My Goal");
@@ -113,7 +110,6 @@ public class FullFlowIntegrationTest {
         Map<String,Object> goalResp = mapper.readValue(goalBody, Map.class);
         assertThat(goalResp).containsKey("id");
 
-        // get analytics
         String analyticsBody = mockMvc.perform(get("/analytics")
                 .principal(principal)
                 .header("Authorization", "Bearer " + token))
