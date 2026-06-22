@@ -1,18 +1,22 @@
 package com.capcom.aspiro.api.service.impl;
 
+import java.util.Comparator;
 import java.util.List;
 
 import com.capcom.aspiro.api.dto.request.CreateTemplateRequest;
-import org.springframework.stereotype.Service;
-
 import com.capcom.aspiro.api.dto.request.UpdateTemplateRequest;
 import com.capcom.aspiro.api.dto.response.TemplateResponse;
+import com.capcom.aspiro.api.dto.response.TemplateStageResponse;
+import com.capcom.aspiro.api.dto.response.TemplateTaskResponse;
 import com.capcom.aspiro.api.exception.custom.ResourceNotFoundException;
 import com.capcom.aspiro.api.service.interfaces.TemplateService;
 import com.capcom.aspiro.domain.model.Template;
+import com.capcom.aspiro.domain.model.TemplateStage;
+import com.capcom.aspiro.domain.model.TemplateTask;
 import com.capcom.aspiro.domain.repository.TemplateRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +26,6 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public List<TemplateResponse> getAllTemplates() {
-
         return templateRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
@@ -31,7 +34,6 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public TemplateResponse getTemplateById(Long id) {
-
         Template template = templateRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Template not found"));
 
@@ -40,7 +42,6 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public TemplateResponse createTemplate(CreateTemplateRequest request) {
-
         Template template = Template.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
@@ -53,30 +54,64 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public TemplateResponse updateTemplate(Long id, UpdateTemplateRequest request) {
-
         Template template = templateRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Template not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Template not found"));
 
         template.setTitle(request.getTitle());
         template.setDescription(request.getDescription());
 
-        templateRepository.save(template);
+        template = templateRepository.save(template);
 
         return mapToResponse(template);
     }
 
     @Override
     public void deleteTemplate(Long id) {
-
         templateRepository.deleteById(id);
     }
 
     private TemplateResponse mapToResponse(Template template) {
+    List<TemplateStageResponse> stages = template.getTemplateStages() == null
+            ? List.of()
+            : template.getTemplateStages()
+                    .stream()
+                    .sorted(Comparator.comparing(TemplateStage::getOrderNumber))
+                    .map(this::mapStageToResponse)
+                    .toList();
 
-        return TemplateResponse.builder()
-                .id(template.getId())
-                .title(template.getTitle())
-                .description(template.getDescription())
+    return TemplateResponse.builder()
+            .id(template.getId())
+            .title(template.getTitle())
+            .description(template.getDescription())
+            .stages(stages)
+            .build();
+    }
+
+    private TemplateStageResponse mapStageToResponse(TemplateStage stage) {
+        List<TemplateTaskResponse> tasks = stage.getTemplateTasks() == null
+                ? List.of()
+                : stage.getTemplateTasks()
+                        .stream()
+                        .sorted(Comparator.comparing(TemplateTask::getOrderNumber))
+                        .map(this::mapTaskToResponse)
+                        .toList();
+
+        return TemplateStageResponse.builder()
+                .id(stage.getId())
+                .title(stage.getTitle())
+                .orderNumber(stage.getOrderNumber())
+                .tasks(tasks)
+                .build();
+    }
+
+    private TemplateTaskResponse mapTaskToResponse(TemplateTask task) {
+        return TemplateTaskResponse.builder()
+                .id(task.getId())
+                .title(task.getTitle())
+                .description(task.getDescription())
+                .orderNumber(task.getOrderNumber())
+                .daysOffset(task.getDaysOffset())
+                .durationDays(task.getDurationDays())
                 .build();
     }
 }
