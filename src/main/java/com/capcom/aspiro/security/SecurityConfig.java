@@ -1,7 +1,9 @@
 package com.capcom.aspiro.security;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -20,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
+@Profile("!test")
+@ConditionalOnMissingBean(SecurityFilterChain.class)
 public class SecurityConfig {
 
     private final PasswordEncoder passwordEncoder;
