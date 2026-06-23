@@ -10,4 +10,6 @@ public class CreateTemplateRequest {
     private String title;
 
     private String description;
+
+    private String coverImageUrl;
 }

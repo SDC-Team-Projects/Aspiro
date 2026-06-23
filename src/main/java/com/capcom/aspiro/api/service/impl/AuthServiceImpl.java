@@ -94,6 +94,7 @@ public class AuthServiceImpl implements AuthService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .expiresIn(ACCESS_TOKEN_EXPIRES_IN)
+                .role(user.getRole())
                 .build();
-    }
+}
 }

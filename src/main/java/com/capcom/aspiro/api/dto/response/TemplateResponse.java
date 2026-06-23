@@ -14,6 +14,10 @@ public class TemplateResponse {
     private String title;
 
     private String description;
+    
+    private Boolean archived;
+
+    private String coverImageUrl;
 
     private List<TemplateStageResponse> stages;
 

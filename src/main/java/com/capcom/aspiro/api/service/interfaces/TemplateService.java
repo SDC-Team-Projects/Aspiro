@@ -10,6 +10,12 @@ public interface TemplateService {
 
     List<TemplateResponse> getAllTemplates();
 
+    List<TemplateResponse> getAllTemplatesForAdmin();
+
+    TemplateResponse archiveTemplate(Long id);
+
+    TemplateResponse restoreTemplate(Long id);
+
     TemplateResponse getTemplateById(Long id);
 
     TemplateResponse createTemplate(CreateTemplateRequest request);

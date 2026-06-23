@@ -8,6 +8,7 @@ import com.capcom.aspiro.api.service.interfaces.TemplateTaskService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/template-tasks")
@@ -17,6 +18,7 @@ public class TemplateTaskController {
     private final TemplateTaskService templateTaskService;
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> updateTask(
             @PathVariable Long id,
             @Valid @RequestBody UpdateTemplateTaskRequest request
@@ -28,6 +30,7 @@ public class TemplateTaskController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteTask(
             @PathVariable Long id
     ) {

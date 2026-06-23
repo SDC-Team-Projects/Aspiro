@@ -11,6 +11,7 @@ import com.capcom.aspiro.api.service.interfaces.TemplateStageService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/template-stages")
@@ -21,6 +22,7 @@ public class TemplateStageController {
     private final TemplateTaskService templateTaskService;
 
     @PostMapping("/{id}/tasks")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> createTask(
             @PathVariable Long id,
             @Valid @RequestBody CreateTemplateTaskRequest request
@@ -32,6 +34,7 @@ public class TemplateStageController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> updateStage(
             @PathVariable Long id,
             @Valid @RequestBody UpdateTemplateStageRequest request
@@ -43,6 +46,7 @@ public class TemplateStageController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteStage(
             @PathVariable Long id
     ) {
