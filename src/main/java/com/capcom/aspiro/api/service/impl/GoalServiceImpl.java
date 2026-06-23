@@ -11,6 +11,8 @@ import com.capcom.aspiro.domain.model.enums.TaskStatus;
 import com.capcom.aspiro.domain.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -35,6 +37,13 @@ public class GoalServiceImpl implements GoalService {
 
         Template template = templateRepository.findById(request.getTemplateId())
                 .orElseThrow(() -> new RuntimeException("Template not found"));
+
+        if (Boolean.TRUE.equals(template.getArchived())) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Cannot create goal from archived template"
+    );
+}
 
         Goal goal = Goal.builder()
                 .title(request.getTitle())

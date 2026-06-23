@@ -97,3 +97,23 @@ export async function updateTemplateTask(
 ): Promise<void> {
   await apiClient.patch(`/template-tasks/${id}`, request);
 }
+
+export async function getAdminTemplates(): Promise<Template[]> {
+  const response = await apiClient.get<ApiResponse<Template[]> | Template[]>(
+    "/templates/admin"
+  );
+
+  return unwrapData<Template[]>(response.data);
+}
+
+export async function archiveTemplate(id: number): Promise<Template> {
+  const response = await apiClient.patch<Template>(`/templates/${id}/archive`);
+
+  return response.data;
+}
+
+export async function restoreTemplate(id: number): Promise<Template> {
+  const response = await apiClient.patch<Template>(`/templates/${id}/restore`);
+
+  return response.data;
+}

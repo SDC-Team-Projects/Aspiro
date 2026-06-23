@@ -29,6 +29,13 @@ public class Template {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean archived = false;
+
+    @Column(name = "cover_image_url", columnDefinition = "TEXT")
+    private String coverImageUrl;
+
     @OneToMany(mappedBy = "template")
     @ToString.Exclude
     @Builder.Default

@@ -1,5 +1,7 @@
 export type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE";
 
+export type GoalStatus = "ACTIVE" | "COMPLETED" | string;
+
 export type GoalTask = {
   id: number;
   title: string;
@@ -18,7 +20,7 @@ export type GoalStage = {
 export type Goal = {
   id: number;
   title: string;
-  status: string;
+  status: GoalStatus;
   progress?: number | null;
   startDate?: string | null;
   endDate?: string | null;
@@ -27,7 +29,7 @@ export type Goal = {
 export type GoalDetailed = {
   id: number;
   title: string;
-  status: string;
+  status: GoalStatus;
   startDate?: string | null;
   endDate?: string | null;
   progress?: number | null;

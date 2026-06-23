@@ -1,6 +1,7 @@
+import axios from "axios";
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../api/authApi";
 
 export default function LoginPage() {
@@ -19,54 +20,86 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const data = await loginUser({
+      const response = await loginUser({
         email,
         password,
       });
 
-      localStorage.setItem("accessToken", data.accessToken);
+     localStorage.setItem("accessToken", response.accessToken);
+     localStorage.setItem("userRole", response.role);
+
+     if (response.refreshToken) {
+        localStorage.setItem("refreshToken", response.refreshToken);
+      }
 
       navigate("/templates");
-    } catch {
-      setError("Invalid email or password");
+    } catch (error) {
+      console.error("Login failed:", error);
+
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401 || error.response?.status === 400) {
+          setError("Invalid email or password.");
+        } else {
+          setError("Login failed. Please try again later.");
+        }
+      } else {
+        setError("Login failed.");
+      }
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <section className="auth-card">
-      <h1>Login</h1>
+    <section className="auth-page">
+      <div className="auth-panel">
+        <div className="auth-info">
+          <p className="eyebrow">Welcome back</p>
+          <h1>Continue building your goals.</h1>
+          <p>
+            Sign in to access templates, track your active goals, and manage
+            your learning progress.
+          </p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="form">
-        <label>
-          Email
-          <input
-            type="email"
-            placeholder="user@example.com"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
-        </label>
+        <div className="card auth-form-card">
+          <h2>Login</h2>
 
-        <label>
-          Password
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-          />
-        </label>
+          {error && <p className="error">{error}</p>}
 
-        {error && <p className="error">{error}</p>}
+          <form className="form" onSubmit={handleSubmit}>
+            <label>
+              Email
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="you@example.com"
+                required
+              />
+            </label>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
+            <label>
+              Password
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Your password"
+                required
+              />
+            </label>
+
+            <button type="submit" disabled={loading}>
+              {loading ? "Signing in..." : "Login"}
+            </button>
+          </form>
+
+          <p className="auth-switch">
+            No account yet? <Link to="/register">Create one</Link>
+          </p>
+        </div>
+      </div>
     </section>
   );
 }

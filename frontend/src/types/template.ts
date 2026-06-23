@@ -18,12 +18,15 @@ export type Template = {
   id: number;
   title: string;
   description?: string | null;
+  coverImageUrl?: string | null;
+  archived?: boolean;
   stages?: TemplateStage[] | null;
 };
 
 export type CreateTemplateRequest = {
   title: string;
   description?: string;
+  coverImageUrl?: string;
 };
 
 export type CreateTemplateStageRequest = {
@@ -41,6 +44,7 @@ export type CreateTemplateTaskRequest = {
 export type UpdateTemplateRequest = {
   title: string;
   description?: string;
+  coverImageUrl?: string;
 };
 
 export type UpdateTemplateStageRequest = {

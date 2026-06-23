@@ -9,6 +9,7 @@ import TemplateDetailsPage from "./pages/TemplateDetailsPage";
 import MyProgressPage from "./pages/MyProgressPage";
 import AdminPage from "./pages/AdminPage";
 import GoalDetailsPage from "./pages/GoalDetailsPage";
+import AdminRoute from "./components/AdminRoute";
 
 export default function App() {
   return (
@@ -57,13 +58,13 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          
+
           <Route
             path="/admin"
             element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminPage />
-              </ProtectedRoute>
+              </AdminRoute>
             }
           />
 

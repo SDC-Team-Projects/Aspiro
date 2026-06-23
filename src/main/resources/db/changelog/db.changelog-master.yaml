@@ -20,4 +20,8 @@ databaseChangeLog:
   - include:
       file: db/changelog/changes/007-create-goal-task.sql
 
-  
+  - include:
+      file: db/changelog/changes/008-add-archived-to-templates.sql
+
+  - include:
+      file: db/changelog/changes/009-add-cover-image-url-to-templates.sql

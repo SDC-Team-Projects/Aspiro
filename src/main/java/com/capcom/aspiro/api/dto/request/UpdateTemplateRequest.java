@@ -10,4 +10,6 @@ public class UpdateTemplateRequest {
     private String title;
 
     private String description;
+
+    private String coverImageUrl;
 }

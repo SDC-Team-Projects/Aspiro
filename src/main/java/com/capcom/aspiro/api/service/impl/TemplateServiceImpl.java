@@ -26,6 +26,14 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public List<TemplateResponse> getAllTemplates() {
+        return templateRepository.findByArchivedFalse()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public List<TemplateResponse> getAllTemplatesForAdmin() {
         return templateRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
@@ -45,6 +53,8 @@ public class TemplateServiceImpl implements TemplateService {
         Template template = Template.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
+                .coverImageUrl(request.getCoverImageUrl())
+                .archived(false)
                 .build();
 
         template = templateRepository.save(template);
@@ -59,6 +69,31 @@ public class TemplateServiceImpl implements TemplateService {
 
         template.setTitle(request.getTitle());
         template.setDescription(request.getDescription());
+        template.setCoverImageUrl(request.getCoverImageUrl());
+
+        template = templateRepository.save(template);
+
+        return mapToResponse(template);
+    }
+
+    @Override
+    public TemplateResponse archiveTemplate(Long id) {
+        Template template = templateRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Template not found"));
+
+        template.setArchived(true);
+
+        template = templateRepository.save(template);
+
+        return mapToResponse(template);
+    }
+
+    @Override
+    public TemplateResponse restoreTemplate(Long id) {
+        Template template = templateRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Template not found"));
+
+        template.setArchived(false);
 
         template = templateRepository.save(template);
 
@@ -71,20 +106,22 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     private TemplateResponse mapToResponse(Template template) {
-    List<TemplateStageResponse> stages = template.getTemplateStages() == null
-            ? List.of()
-            : template.getTemplateStages()
-                    .stream()
-                    .sorted(Comparator.comparing(TemplateStage::getOrderNumber))
-                    .map(this::mapStageToResponse)
-                    .toList();
+        List<TemplateStageResponse> stages = template.getTemplateStages() == null
+                ? List.of()
+                : template.getTemplateStages()
+                        .stream()
+                        .sorted(Comparator.comparing(TemplateStage::getOrderNumber))
+                        .map(this::mapStageToResponse)
+                        .toList();
 
-    return TemplateResponse.builder()
-            .id(template.getId())
-            .title(template.getTitle())
-            .description(template.getDescription())
-            .stages(stages)
-            .build();
+        return TemplateResponse.builder()
+                .id(template.getId())
+                .title(template.getTitle())
+                .description(template.getDescription())
+                .coverImageUrl(template.getCoverImageUrl())
+                .archived(template.getArchived())
+                .stages(stages)
+                .build();
     }
 
     private TemplateStageResponse mapStageToResponse(TemplateStage stage) {

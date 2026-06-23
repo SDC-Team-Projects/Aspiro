@@ -5,9 +5,14 @@ export default function Navbar() {
   const location = useLocation();
 
   const isAuthenticated = Boolean(localStorage.getItem("accessToken"));
+  const userRole = localStorage.getItem("userRole");
+  const isAdmin = userRole === "ADMIN";
 
   function handleLogout() {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userRole");
+
     navigate("/login");
   }
 
@@ -38,16 +43,22 @@ export default function Navbar() {
               My Progress
             </NavLink>
 
-            <NavLink
-              to="/admin"
-              className={({ isActive }) =>
-                isActive ? "nav-link active" : "nav-link"
-              }
-            >
-              Admin
-            </NavLink>
+            {isAdmin && (
+              <NavLink
+                to="/admin"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                Admin
+              </NavLink>
+            )}
 
-            <button type="button" className="logout-button" onClick={handleLogout}>
+            <button
+              type="button"
+              className="logout-button"
+              onClick={handleLogout}
+            >
               Logout
             </button>
           </>

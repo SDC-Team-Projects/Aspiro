@@ -1,5 +1,6 @@
 package com.capcom.aspiro.api.dto.response;
 
+import com.capcom.aspiro.domain.model.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,4 +15,6 @@ public class AuthResponse {
     private String refreshToken;
 
     private Long expiresIn;
+
+    private UserRole role;
 }
