@@ -33,10 +33,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override
     public AnalyticsResponse getUserAnalytics(String userEmail) {
-        /*
-         TEMP USER
-         REPLACE AFTER JWT
-        */
+        
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
@@ -65,12 +62,16 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 .count();
 
         int overdueTasks = (int) allTasks.stream()
-                .filter(task -> task.getStatus() == TaskStatus.OVERDUE
-                                ||
-                                (task.getEndDate().isBefore(LocalDate.now())
-                                                &&
-                                                task.getStatus() != TaskStatus.DONE))
-                .count();
+        .filter(task ->
+                task.getStatus() == TaskStatus.OVERDUE
+                        ||
+                        (
+                                task.getEndDate() != null
+                                        && task.getEndDate().isBefore(LocalDate.now())
+                                        && task.getStatus() != TaskStatus.DONE
+                        )
+        )
+        .count();
 
         int completedGoals = (int) goals.stream()
                 .filter(goal -> goal.getStatus() == GoalStatus.COMPLETED)

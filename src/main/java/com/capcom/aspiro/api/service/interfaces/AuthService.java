@@ -5,10 +5,11 @@ import com.capcom.aspiro.api.dto.request.RefreshTokenRequest;
 import com.capcom.aspiro.api.dto.request.RegisterRequest;
 import com.capcom.aspiro.api.dto.response.AuthResponse;
 import com.capcom.aspiro.api.dto.response.UserProfileResponse;
+import com.capcom.aspiro.api.dto.response.UserResponse;
 
 public interface AuthService {
 
-    void register(RegisterRequest request);
+    UserResponse register(RegisterRequest request);
 
     AuthResponse login(LoginRequest request);
 

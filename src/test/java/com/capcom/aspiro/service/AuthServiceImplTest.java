@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +45,19 @@ class AuthServiceImplTest {
         when(userRepository.existsByEmail("alice@example.com")).thenReturn(false);
         when(passwordEncoder.encode("password")).thenReturn("encoded");
 
-        authService.register(req);
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            user.setId(1L);
+            return user;
+        });
+
+        var resp = authService.register(req);
+
+        assertNotNull(resp);
+        assertEquals(1L, resp.getId());
+        assertEquals("Alice", resp.getName());
+        assertEquals("alice@example.com", resp.getEmail());
+        assertEquals(UserRole.USER, resp.getRole());
 
         verify(userRepository, times(1)).save(any(User.class));
     }

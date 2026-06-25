@@ -1,7 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getAnalytics } from "../api/analyticsApi";
 import { getUserGoals } from "../api/goalApi";
+import type { AnalyticsResponse } from "../types/analytics";
 import type { Goal } from "../types/goal";
 
 function parseLocalDate(dateString?: string | null): Date | null {
@@ -40,38 +42,44 @@ export default function MyProgressPage() {
   const navigate = useNavigate();
 
   const [goals, setGoals] = useState<Goal[]>([]);
+  const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function loadGoals() {
+    async function loadPageData() {
       try {
-        const data = await getUserGoals();
+        const [goalsData, analyticsData] = await Promise.all([
+          getUserGoals(),
+          getAnalytics(),
+        ]);
 
-        console.log("Goals response:", data);
+        console.log("Goals response:", goalsData);
+        console.log("Analytics response:", analyticsData);
 
-        setGoals(data);
+        setGoals(goalsData);
+        setAnalytics(analyticsData);
       } catch (error) {
-        console.error("Failed to load goals:", error);
+        console.error("Failed to load progress page:", error);
 
         if (axios.isAxiosError(error)) {
           console.error("Status:", error.response?.status);
           console.error("Response:", error.response?.data);
 
           setError(
-            `Failed to load goals. Status: ${
+            `Failed to load progress. Status: ${
               error.response?.status || "network error"
             }`
           );
         } else {
-          setError("Failed to load goals.");
+          setError("Failed to load progress.");
         }
       } finally {
         setLoading(false);
       }
     }
 
-    loadGoals();
+    loadPageData();
   }, []);
 
   if (loading) {
@@ -91,11 +99,39 @@ export default function MyProgressPage() {
         </div>
 
         {goals.length > 0 && (
-          <button type="button" onClick={() => navigate("/templates")}>
+          <button
+            type="button"
+            className="primary-button"
+            onClick={() => navigate("/templates")}
+          >
             Start new goal
           </button>
         )}
       </div>
+
+      <section className="analytics-panel">
+        <div className="analytics-card">
+          <span className="analytics-label">Overall progress</span>
+          <strong>{analytics?.goalProgress ?? 0}%</strong>
+        </div>
+
+        <div className="analytics-card">
+          <span className="analytics-label">Tasks done</span>
+          <strong>
+            {analytics?.tasksDone ?? 0} / {analytics?.totalTasks ?? 0}
+          </strong>
+        </div>
+
+        <div className="analytics-card">
+          <span className="analytics-label">Overdue tasks</span>
+          <strong>{analytics?.overdueTasks ?? 0}</strong>
+        </div>
+
+        <div className="analytics-card">
+          <span className="analytics-label">Completed goals</span>
+          <strong>{analytics?.completedGoals ?? 0}</strong>
+        </div>
+      </section>
 
       {goals.length === 0 ? (
         <div className="empty-state-card">
@@ -109,12 +145,12 @@ export default function MyProgressPage() {
           </p>
 
           <button
-  type="button"
-  className="empty-state-button"
-  onClick={() => navigate("/templates")}
->
-  Browse templates
-</button>
+            type="button"
+            className="empty-state-button"
+            onClick={() => navigate("/templates")}
+          >
+            Browse templates
+          </button>
         </div>
       ) : (
         <div className="grid">

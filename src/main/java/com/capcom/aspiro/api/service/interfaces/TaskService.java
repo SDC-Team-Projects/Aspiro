@@ -5,8 +5,9 @@ import com.capcom.aspiro.api.dto.response.GoalTaskResponse;
 
 public interface TaskService {
 
-    GoalTaskResponse updateTaskStatus(
+     GoalTaskResponse updateTaskStatus(
             Long taskId,
-            UpdateTaskStatusRequest request
+            UpdateTaskStatusRequest request,
+            String userEmail
     );
 }

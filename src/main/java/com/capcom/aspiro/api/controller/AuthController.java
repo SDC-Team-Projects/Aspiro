@@ -5,6 +5,7 @@ import com.capcom.aspiro.api.dto.request.RefreshTokenRequest;
 import com.capcom.aspiro.api.dto.request.RegisterRequest;
 import com.capcom.aspiro.api.dto.response.AuthResponse;
 import com.capcom.aspiro.api.dto.response.UserProfileResponse;
+import com.capcom.aspiro.api.dto.response.UserResponse;
 import com.capcom.aspiro.api.service.interfaces.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -28,12 +29,12 @@ public class AuthController {
 
     @Operation(summary = "Register new user")
     @PostMapping("/register")
-    public ResponseEntity<Void> register(
+    public ResponseEntity<UserResponse> register(
             @Valid @RequestBody RegisterRequest request
     ) {
-        authService.register(request);
-
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(authService.register(request));
     }
 
     @Operation(summary = "Login user and receive JWT token")
