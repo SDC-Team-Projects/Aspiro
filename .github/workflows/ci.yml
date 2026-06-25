@@ -26,7 +26,7 @@ jobs:
       - name: Run Tests and Generate Coverage Report
         env:
           SPRING_PROFILES_ACTIVE: test
-          JWT_SECRET: MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTA=
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: ./gradlew test jacocoTestReport --continue
 
       - name: Check Coverage Threshold
