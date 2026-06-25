@@ -3,7 +3,9 @@ package com.capcom.aspiro.api.service.impl;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.capcom.aspiro.api.dto.request.UpdateTaskStatusRequest;
 import com.capcom.aspiro.api.dto.response.GoalTaskResponse;
@@ -30,22 +32,48 @@ public class TaskServiceImpl implements TaskService {
     private final GoalRepository goalRepository;
 
     @Override
-    public GoalTaskResponse updateTaskStatus(Long taskId, UpdateTaskStatusRequest request) {
+    public GoalTaskResponse updateTaskStatus(
+            Long taskId,
+            UpdateTaskStatusRequest request,
+            String userEmail
+    ) {
+        if (request.getStatus() == TaskStatus.OVERDUE) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "OVERDUE status is assigned automatically by the system"
+            );
+        }
 
-        GoalTask task = goalTaskRepository.findById(taskId)
+        GoalTask task = goalTaskRepository.findByIdWithGoalAndUser(taskId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Task not found"
                         )
                 );
 
+        String taskOwnerEmail = task
+                .getGoalStage()
+                .getGoal()
+                .getUser()
+                .getEmail();
+
+        if (!taskOwnerEmail.equals(userEmail)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Access denied"
+            );
+        }
+
         task.setStatus(request.getStatus());
 
         /*
          AUTO OVERDUE CHECK
         */
-        if (task.getEndDate().isBefore(LocalDate.now()) && request.getStatus() != TaskStatus.DONE) {
-
+        if (
+                task.getEndDate() != null
+                        && task.getEndDate().isBefore(LocalDate.now())
+                        && request.getStatus() != TaskStatus.DONE
+        ) {
             task.setStatus(TaskStatus.OVERDUE);
         }
 
@@ -75,7 +103,12 @@ public class TaskServiceImpl implements TaskService {
                     break;
                 }
             }
+
+            if (!allCompleted) {
+                break;
+            }
         }
+
         /*
          ALL TASKS COMPLETED
         */
@@ -87,7 +120,7 @@ public class TaskServiceImpl implements TaskService {
             /*
              GOAL OVERDUE
             */
-            if (goal.getEndDate().isBefore(LocalDate.now())) {
+            if (goal.getEndDate() != null && goal.getEndDate().isBefore(LocalDate.now())) {
 
                 goal.setStatus(GoalStatus.OVERDUE);
 

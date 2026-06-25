@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import com.capcom.aspiro.api.dto.request.UpdateTaskStatusRequest;
 import com.capcom.aspiro.api.dto.response.GoalTaskResponse;
 import com.capcom.aspiro.api.service.interfaces.TaskService;
+import org.springframework.security.core.Authentication;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +21,15 @@ public class TaskController {
     @PatchMapping("/{id}")
     public ResponseEntity<GoalTaskResponse> updateTaskStatus(
             @PathVariable Long id,
-            @Valid @RequestBody UpdateTaskStatusRequest request
+            @Valid @RequestBody UpdateTaskStatusRequest request,
+            Authentication authentication
     ) {
-
         return ResponseEntity.ok(
-                taskService.updateTaskStatus(id, request)
+                taskService.updateTaskStatus(
+                        id,
+                        request,
+                        authentication.getName()
+                )
         );
     }
 }

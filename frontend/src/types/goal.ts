@@ -1,6 +1,8 @@
-export type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE";
+export type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE" | "OVERDUE";
 
-export type GoalStatus = "ACTIVE" | "COMPLETED" | string;
+export type UpdateTaskStatusValue = "TODO" | "IN_PROGRESS" | "DONE";
+
+export type GoalStatus = "ACTIVE" | "COMPLETED" | "OVERDUE" | string;
 
 export type GoalTask = {
   id: number;
@@ -43,5 +45,5 @@ export type CreateGoalRequest = {
 };
 
 export type UpdateTaskStatusRequest = {
-  status: TaskStatus;
+  status: UpdateTaskStatusValue;
 };

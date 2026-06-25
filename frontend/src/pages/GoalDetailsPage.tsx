@@ -1,9 +1,9 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getGoalById } from "../api/goalApi";
 import { updateTaskStatus } from "../api/taskApi";
-import type { GoalDetailed } from "../types/goal";
+import type { GoalDetailed, GoalTask } from "../types/goal";
 
 function parseLocalDate(dateString?: string | null): Date | null {
   if (!dateString) {
@@ -41,11 +41,41 @@ function isSameDay(first: Date, second: Date): boolean {
   );
 }
 
+function isTaskOverdue(task: GoalTask): boolean {
+  if (task.status === "DONE") {
+    return false;
+  }
+
+  if (task.status === "OVERDUE") {
+    return true;
+  }
+
+  const deadline = parseLocalDate(task.endDate);
+
+  if (!deadline) {
+    return false;
+  }
+
+  const today = new Date();
+
+  today.setHours(0, 0, 0, 0);
+  deadline.setHours(0, 0, 0, 0);
+
+  return deadline < today;
+}
+
 function getTaskDeadlineStatus(taskStatus: string, endDate?: string | null) {
   if (taskStatus === "DONE") {
     return {
       label: "Completed",
       className: "deadline-badge completed",
+    };
+  }
+
+  if (taskStatus === "OVERDUE") {
+    return {
+      label: "Overdue",
+      className: "deadline-badge overdue",
     };
   }
 
@@ -163,6 +193,29 @@ export default function GoalDetailsPage() {
     }
   }
 
+  const goalAnalytics = useMemo(() => {
+    const allTasks = goal?.stages?.flatMap((stage) => stage.tasks ?? []) ?? [];
+
+    const totalTasks = allTasks.length;
+
+    const doneTasks = allTasks.filter((task) => task.status === "DONE").length;
+
+    const overdueTasks = allTasks.filter((task) => isTaskOverdue(task)).length;
+
+    const remainingTasks = totalTasks - doneTasks;
+
+    const computedProgress =
+      totalTasks > 0 ? Math.round((doneTasks * 100) / totalTasks) : 0;
+
+    return {
+      totalTasks,
+      doneTasks,
+      overdueTasks,
+      remainingTasks,
+      computedProgress,
+    };
+  }, [goal]);
+
   if (loading) {
     return <p>Loading goal...</p>;
   }
@@ -175,7 +228,7 @@ export default function GoalDetailsPage() {
     return <p>Goal not found.</p>;
   }
 
-  const progress = goal.progress ?? 0;
+  const progress = goalAnalytics.computedProgress;
   const isGoalCompleted = progress >= 100 || goal.status === "COMPLETED";
 
   return (
@@ -214,6 +267,30 @@ export default function GoalDetailsPage() {
           </p>
         )}
 
+        <section className="goal-analytics-panel">
+          <div className="goal-analytics-card">
+            <span className="analytics-label">Goal progress</span>
+            <strong>{progress}%</strong>
+          </div>
+
+          <div className="goal-analytics-card">
+            <span className="analytics-label">Tasks done</span>
+            <strong>
+              {goalAnalytics.doneTasks} / {goalAnalytics.totalTasks}
+            </strong>
+          </div>
+
+          <div className="goal-analytics-card">
+            <span className="analytics-label">Overdue tasks</span>
+            <strong>{goalAnalytics.overdueTasks}</strong>
+          </div>
+
+          <div className="goal-analytics-card">
+            <span className="analytics-label">Remaining tasks</span>
+            <strong>{goalAnalytics.remainingTasks}</strong>
+          </div>
+        </section>
+
         <p>Progress: {progress}%</p>
 
         <div className="progress-bar">
@@ -241,48 +318,53 @@ export default function GoalDetailsPage() {
                 <p>No tasks in this stage.</p>
               ) : (
                 <div className="goal-task-list">
-  {stage.tasks.map((task) => {
-    const deadlineInfo = getTaskDeadlineStatus(task.status, task.endDate);
+                  {stage.tasks.map((task) => {
+                    const deadlineInfo = getTaskDeadlineStatus(
+                      task.status,
+                      task.endDate
+                    );
 
-    return (
-      <div key={task.id} className="goal-task-card">
-        <div className="goal-task-main">
-          <div className="task-title-row">
-            <strong>{task.title}</strong>
+                    return (
+                      <div key={task.id} className="goal-task-card">
+                        <div className="goal-task-main">
+                          <div className="task-title-row">
+                            <strong>{task.title}</strong>
 
-            <span
-              className={`task-status-badge task-status-${getStatusClassName(
-                task.status
-              )}`}
-            >
-              {task.status}
-            </span>
-          </div>
+                            <span
+                              className={`task-status-badge task-status-${getStatusClassName(
+                                task.status
+                              )}`}
+                            >
+                              {task.status}
+                            </span>
+                          </div>
 
-          <div className="task-deadline-info">
-            <span>Start: {formatDate(task.startDate)}</span>
-            <span>Deadline: {formatDate(task.endDate)}</span>
+                          <div className="task-deadline-info">
+                            <span>Start: {formatDate(task.startDate)}</span>
+                            <span>Deadline: {formatDate(task.endDate)}</span>
 
-            <span className={deadlineInfo.className}>
-              {deadlineInfo.label}
-            </span>
-          </div>
-        </div>
+                            <span className={deadlineInfo.className}>
+                              {deadlineInfo.label}
+                            </span>
+                          </div>
+                        </div>
 
-        {task.status !== "DONE" && (
-          <button
-            type="button"
-            className="task-done-button"
-            onClick={() => handleMarkTaskDone(task.id)}
-            disabled={updatingTaskId === task.id}
-          >
-            {updatingTaskId === task.id ? "Updating..." : "Mark as done"}
-          </button>
-        )}
-      </div>
-    );
-  })}
-</div>
+                        {task.status !== "DONE" && (
+                          <button
+                            type="button"
+                            className="task-done-button"
+                            onClick={() => handleMarkTaskDone(task.id)}
+                            disabled={updatingTaskId === task.id}
+                          >
+                            {updatingTaskId === task.id
+                              ? "Updating..."
+                              : "Mark as done"}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               )}
             </article>
           ))}

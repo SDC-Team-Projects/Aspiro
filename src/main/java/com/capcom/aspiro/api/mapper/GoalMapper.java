@@ -2,7 +2,10 @@ package com.capcom.aspiro.api.mapper;
 
 import java.util.List;
 
-import com.capcom.aspiro.api.dto.response.*;
+import com.capcom.aspiro.api.dto.response.GoalDetailedResponse;
+import com.capcom.aspiro.api.dto.response.GoalResponse;
+import com.capcom.aspiro.api.dto.response.GoalStageResponse;
+import com.capcom.aspiro.api.util.StatusResolver;
 import com.capcom.aspiro.domain.model.Goal;
 import com.capcom.aspiro.domain.model.GoalStage;
 
@@ -16,7 +19,10 @@ public class GoalMapper {
         return GoalResponse.builder()
                 .id(goal.getId())
                 .title(goal.getTitle())
-                .status(goal.getStatus())
+                .status(StatusResolver.resolveGoalStatus(
+                        goal.getStatus(),
+                        goal.getEndDate()
+                ))
                 .startDate(goal.getStartDate())
                 .endDate(goal.getEndDate())
                 .progress(progress)
@@ -32,7 +38,10 @@ public class GoalMapper {
         return GoalDetailedResponse.builder()
                 .id(goal.getId())
                 .title(goal.getTitle())
-                .status(goal.getStatus())
+                .status(StatusResolver.resolveGoalStatus(
+                        goal.getStatus(),
+                        goal.getEndDate()
+                ))
                 .startDate(goal.getStartDate())
                 .endDate(goal.getEndDate())
                 .progress(progress)

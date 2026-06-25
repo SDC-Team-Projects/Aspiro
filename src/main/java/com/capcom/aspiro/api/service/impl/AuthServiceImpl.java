@@ -5,6 +5,7 @@ import com.capcom.aspiro.api.dto.request.RefreshTokenRequest;
 import com.capcom.aspiro.api.dto.request.RegisterRequest;
 import com.capcom.aspiro.api.dto.response.AuthResponse;
 import com.capcom.aspiro.api.dto.response.UserProfileResponse;
+import com.capcom.aspiro.api.dto.response.UserResponse;
 import com.capcom.aspiro.api.service.interfaces.AuthService;
 import com.capcom.aspiro.domain.model.User;
 import com.capcom.aspiro.domain.model.enums.UserRole;
@@ -25,7 +26,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
 
     @Override
-    public void register(RegisterRequest request) {
+    public UserResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
@@ -38,7 +39,14 @@ public class AuthServiceImpl implements AuthService {
                 .role(UserRole.USER)
                 .build();
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        return UserResponse.builder()
+                .id(savedUser.getId())
+                .name(savedUser.getName())
+                .email(savedUser.getEmail())
+                .role(savedUser.getRole())
+                .build();
     }
 
     @Override
@@ -96,5 +104,5 @@ public class AuthServiceImpl implements AuthService {
                 .expiresIn(ACCESS_TOKEN_EXPIRES_IN)
                 .role(user.getRole())
                 .build();
-}
+    }
 }
